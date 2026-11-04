@@ -2,8 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Bell, CalendarDays, Camera, Check, ChevronRight, CirclePlus, Clock3, Heart, Menu, MoreHorizontal, Plus, Search, UploadCloud } from "lucide-react";
+import { Bell, CalendarDays, Camera, Check, ChevronRight, CirclePlus, Clock3, Menu, MoreHorizontal, Plus, Search, UploadCloud } from "lucide-react";
 import Sidebar from "@/components/sidebar";
+import BottomNav from "@/components/bottom-nav";
 
 type Task = { id: string | number; title: string; course: string; date: string; tag: string; color: string; done: boolean };
 type AgendaItem = { id: string; day: string; month: string; title: string; detail: string };
@@ -17,10 +18,6 @@ type Props = {
   todayLabel?: string;
 };
 
-const initialAnnouncements: {
-  date: string; label: string; title: string; body: string; color: string;
-}[] = [];
-
 export default function Dashboard({
   photoCount = 0,
   canManage = false,
@@ -30,7 +27,6 @@ export default function Dashboard({
   todayLabel = "",
 }: Props) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [announcements] = useState(initialAnnouncements);
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDate, setNewDate] = useState("");
@@ -170,21 +166,6 @@ export default function Dashboard({
           </div>
 
           <div className="right-column">
-            <div className="panel announcement-panel">
-              <div className="panel-heading">
-                <div><span className="eyebrow">DARI RUANG KITA</span><h3>Kabar angkatan</h3></div>
-                <button className="icon-button small" aria-label="Lihat pengumuman lainnya" onClick={() => setToast("Arsip pengumuman belum tersedia.")}><MoreHorizontal size={18} /></button>
-              </div>
-              <div className="announcement-list">
-                {announcements.map(a => <article className="announcement" key={a.title}>
-                  <div className={`announcement-date ${a.color}`}><strong>{a.date.split(" ")[0]}</strong><span>{a.date.split(" ")[1]}</span></div>
-                  <div className="announcement-copy"><span className="eyebrow">{a.label}</span><h4>{a.title}</h4><p>{a.body}</p></div>
-                  <button className="save-announcement" aria-label="Simpan pengumuman" onClick={() => setToast("Fitur simpan pengumuman segera hadir.")}><Heart size={16} /></button>
-                </article>)}
-              </div>
-              <button className="panel-bottom-link" onClick={() => setToast("Arsip pengumuman belum tersedia.")}>Semua pengumuman <ChevronRight size={15} /></button>
-            </div>
-
             <div className="panel event-panel">
               <div className="panel-heading">
                 <div><span className="eyebrow">CATAT</span><h3>Agenda mendatang</h3></div>
@@ -216,5 +197,6 @@ export default function Dashboard({
       </div>
     </main>
     {toast && <div className="toast" role="status">{toast}<button onClick={() => setToast("")} aria-label="Tutup notifikasi">×</button></div>}
+    <BottomNav />
   </div>;
 }

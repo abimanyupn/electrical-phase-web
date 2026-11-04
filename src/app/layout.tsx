@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import DeadlineReminders from "@/components/deadline-reminders";
 import ScheduleReminders from "@/components/schedule-reminders";
+import BackButton from "@/components/back-button";
 
 export const metadata: Metadata = {
   title: "Electrical Phase",
@@ -15,7 +16,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="id">
       <body suppressHydrationWarning>
         {children}
-        <DeadlineReminders />
+        <DeadlineReminders /> 
+        <BackButton />
         <ScheduleReminders />
       </body>
     </html>

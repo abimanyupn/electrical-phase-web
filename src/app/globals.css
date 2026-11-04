@@ -329,3 +329,41 @@ button, .primary-button, .outline-button, .hero-button, .join-button {
 .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .form-ok { color: var(--navy); background: var(--orange-soft); border: 2px solid var(--navy); padding: 8px 10px; border-radius: 2px; }
 .form-err { color: #9b1c1c; background: #fde8e8; border: 2px solid #9b1c1c; padding: 8px 10px; border-radius: 2px; }
+
+.shell { min-height: 100vh; display: flex; flex-direction: column; }
+.shell-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 20px; padding-top: calc(12px + env(safe-area-inset-top));
+  border-bottom: 2px solid var(--navy); background: var(--paper);
+}
+.shell-brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); text-transform: uppercase; color: var(--navy); text-decoration: none; }
+.shell-brand b { color: var(--orange); font-weight: inherit; }
+.shell-links { display: flex; gap: 16px; margin-left: auto; }
+.shell-links a { color: var(--navy); text-decoration: none; font-weight: 600; }
+.shell-links a:hover { color: var(--orange); }
+.shell-main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+.shell-footer {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 16px 20px; border-top: 2px solid var(--navy);
+  font-family: ui-monospace, "JetBrains Mono", monospace; font-size: .75rem; text-transform: uppercase;
+}
+
+/* bar bawah: hanya di layar kecil */
+.bottom-nav { display: none; }
+@media (max-width: 900px) {
+  .shell-links, .shell-cta { display: none; }
+  .shell-header { justify-content: space-between; }
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .bottom-nav {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--navy); border-top: 3px solid var(--orange);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-tab {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 9px 4px; color: #c9d3e4; text-decoration: none;
+    font-family: ui-monospace, "JetBrains Mono", monospace; font-size: .62rem; text-transform: uppercase;
+  }
+  .bottom-tab.active { color: var(--orange); }
+}
