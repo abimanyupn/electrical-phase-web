@@ -9,13 +9,13 @@ const ME = {
   tagline: "Bikin ini karena capek scroll grup buat nyari deadline.",
   photo: "/abimwhenyhbisaphotoboothbareng.jpeg" as string | null, // taruh file di public/profile.jpg, atau isi null kalau belum ada
   bio: [
-    "Hai, Aku yang buat web ini karna ya....tau lah sendiri, aku malas buka chat wa.",
-    "dan Situs ini dibuat biar info penting nggak tenggelam di chat. Kalau ada yang salah atau mau ditambah, bilang aja.",
+    "hai, aku yang buat web ini karna ya....tau lah sendiri, aku malas buka chat wa.",
+    "dan Situs ini dibuat biar info penting nggak tenggelam di chat. kalau ada yang salah atau mau ditambah, bilang aja.",
   ],
   facts: [
     { label: "ANGKATAN", value: "Elektro 2025" },
-    { label: "SUKA", value: "SKS (Kabut Semalam), Slow Response, Selalu DnD" },
-    { label: "TIDAK SUKA", value: "Buka Wa" },
+    { label: "SUKA", value: "SKS (Kabut Semalam), Slow Response, Selalu DnD, kepengen photobooth trus kita lakuin pose apa aja" },
+    { label: "TIDAK SUKA", value: "Buka Wa, fast response, pj hama" },
   ],
   links: [
     { label: "Instagram", href: "https://instagram.com/yabainmu", icon: Instagram },
