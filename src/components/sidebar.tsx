@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarDays, CheckSquare, Home, X, Globe, Images, ShieldCheck, User } from "lucide-react";
 import Image from "next/image";
+import { CalendarClock } from "lucide-react";
 
 const items = [
   { href: "/ruang", label: "Dashboard", icon: Home },
@@ -9,6 +10,7 @@ const items = [
   { href: "/calendar", label: "Kalender", icon: CalendarDays },
   { href: "/galeri", label: "Galeri", icon: Images },
   { href: "/about", label: "Tentang", icon: User },
+  { href: "/jadwal", label: "Jadwal", icon: CalendarClock },
 ];
 
 export default function Sidebar({ onClose, canManage = false }: { onClose?: () => void; canManage?: boolean }) {

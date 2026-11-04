@@ -4,7 +4,7 @@ import { useEffect } from "react";
 function toId(s: string) {
   let h = 0;
   for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0;
-  return (Math.abs(h) % 2000000000) + 1;
+  return (Math.abs(h) % 800_000_000) + 100;
 }
 
 type Task = { id: string; title: string; description: string | null; due_at: string };
@@ -22,12 +22,6 @@ export default function DeadlineReminders() {
       const res = await fetch("/api/deadlines", { cache: "no-store" });
       if (!res.ok) return;
       const tasks: Task[] = await res.json();
-
-      // hapus jadwal lama, lalu buat ulang dari data terbaru
-      const pending = await LocalNotifications.getPending();
-      if (pending.notifications.length) {
-        await LocalNotifications.cancel({ notifications: pending.notifications.map((n) => ({ id: n.id })) });
-      }
 
       const now = Date.now();
       const reminders = [

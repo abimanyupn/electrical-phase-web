@@ -3,7 +3,7 @@ import { dayMonth, timeOf } from "@/lib/format";
 import { createServiceClient, BUCKET } from "@/lib/supabase/service";
 import {
   addDeadline, addEvent, removeTask, removeEvent, addInvite,
-  approvePhoto, rejectPhoto,
+  approvePhoto, rejectPhoto, addClass, removeClass,
 } from "./actions";
 
 type PendingPhoto = {
@@ -13,11 +13,13 @@ type PendingPhoto = {
   uploader_name: string | null;
 };
 
+const HARI = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
 export default async function AdminPage() {
   const { supabase, role } = await requireStaff();
   const isAdmin = role === "admin";
 
-  const [{ data: tasks }, { data: events }, { data: invites }, { data: pending }] = await Promise.all([
+  const [{ data: tasks }, { data: events }, { data: invites }, { data: pending }, { data: classes }] = await Promise.all([
     supabase.from("tasks").select("*").eq("scope", "cohort").order("due_at"),
     supabase.from("events").select("*").order("starts_at"),
     isAdmin
@@ -27,6 +29,9 @@ export default async function AdminPage() {
       ? supabase.from("photos").select("id, storage_path, caption, uploader_name")
           .eq("status", "pending").order("created_at")
       : Promise.resolve({ data: [] as PendingPhoto[] }),
+    supabase.from("class_schedule")
+      .select("id, day, start_time, end_time, course, room")
+      .order("day").order("start_time"),
   ]);
 
   // bucket private: buat link preview sementara untuk foto yang menunggu
@@ -88,6 +93,33 @@ export default async function AdminPage() {
         <label>Waktu (WITA)<input type="datetime-local" name="starts_at" required/></label>
         <label>Lokasi<input name="location"/></label>
         <label>Deskripsi<input name="description"/></label>
+        <button className="primary-button">Tambah</button>
+      </form>
+    </section>
+
+    <section className="panel">
+      <h3>Jadwal kuliah angkatan</h3>
+      {classes?.length === 0 && <p>Belum ada jadwal.</p>}
+      {classes?.map(c => <div className="task-row" key={c.id}>
+        <div className="task-main">
+          <strong>{c.course}</strong>
+          <span>
+            {HARI[c.day - 1]} · {String(c.start_time).slice(0, 5)}–{String(c.end_time).slice(0, 5)}
+            {c.room ? ` · ${c.room}` : ""}
+          </span>
+        </div>
+        <form action={removeClass.bind(null, c.id)}><button>Hapus</button></form>
+      </div>)}
+      <form action={addClass} className="add-task-form">
+        <label>Mata kuliah<input name="course" required/></label>
+        <label>Hari
+          <select name="day">
+            {HARI.map((h, i) => <option key={h} value={i + 1}>{h}</option>)}
+          </select>
+        </label>
+        <label>Mulai<input type="time" name="start_time" required/></label>
+        <label>Selesai<input type="time" name="end_time" required/></label>
+        <label>Ruang<input name="room"/></label>
         <button className="primary-button">Tambah</button>
       </form>
     </section>

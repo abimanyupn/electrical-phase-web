@@ -1,0 +1,65 @@
+export const DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
+export type ClassItem = {
+  id: string;
+  day: number;      // 1 = Senin ... 7 = Minggu
+  start: string;    // "HH:MM"
+  end: string;
+  course: string;
+  room: string;
+  source: "angkatan" | "pribadi";
+};
+
+export type Settings = {
+  h1: boolean;            // pengingat malam sebelumnya
+  h1Hour: number;         // jam pengingat H-1 (0-23)
+  before: number;         // menit sebelum kuliah (0 = mati)
+  includeCohort: boolean; // ikut jadwal angkatan
+};
+
+export const DEFAULT_SETTINGS: Settings = { h1: true, h1Hour: 20, before: 30, includeCohort: true };
+
+const PERSONAL_KEY = "ep:personal-schedule";
+const SETTINGS_KEY = "ep:schedule-settings";
+const TIME = /^\d{2}:\d{2}$/;
+
+function isItem(x: unknown): x is ClassItem {
+  const o = x as ClassItem;
+  return !!o && typeof o.id === "string" && Number.isInteger(o.day) && o.day >= 1 && o.day <= 7
+    && TIME.test(o.start) && TIME.test(o.end) && typeof o.course === "string" && typeof o.room === "string";
+}
+
+export function loadPersonal(): ClassItem[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = JSON.parse(localStorage.getItem(PERSONAL_KEY) ?? "[]");
+    return Array.isArray(raw) ? raw.filter(isItem) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function savePersonal(items: ClassItem[]) {
+  localStorage.setItem(PERSONAL_KEY, JSON.stringify(items));
+  window.dispatchEvent(new Event("ep:schedule-changed"));
+}
+
+export function loadSettings(): Settings {
+  if (typeof window === "undefined") return DEFAULT_SETTINGS;
+  try {
+    const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? "{}");
+    return {
+      h1: typeof raw.h1 === "boolean" ? raw.h1 : DEFAULT_SETTINGS.h1,
+      h1Hour: Number.isInteger(raw.h1Hour) && raw.h1Hour >= 0 && raw.h1Hour <= 23 ? raw.h1Hour : DEFAULT_SETTINGS.h1Hour,
+      before: Number.isInteger(raw.before) && raw.before >= 0 && raw.before <= 180 ? raw.before : DEFAULT_SETTINGS.before,
+      includeCohort: typeof raw.includeCohort === "boolean" ? raw.includeCohort : DEFAULT_SETTINGS.includeCohort,
+    };
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+}
+
+export function saveSettings(s: Settings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  window.dispatchEvent(new Event("ep:schedule-changed"));
+}
