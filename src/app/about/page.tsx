@@ -7,7 +7,7 @@ const ME = {
   name: "abeemanyu pn",
   role: "PJ Abadi / Elektro 2025",
   tagline: "Bikin ini karena capek scroll grup buat nyari deadline.",
-  photo: "/profile.jpg" as string | null, // taruh file di public/profile.jpg, atau isi null kalau belum ada
+  photo: "/abimwhenyhbisaphotoboothbareng.jpeg" as string | null, // taruh file di public/profile.jpg, atau isi null kalau belum ada
   bio: [
     "Hai, Aku yang buat web ini karna ya....tau lah sendiri, aku malas buka chat wa.",
     "dan Situs ini dibuat biar info penting nggak tenggelam di chat. Kalau ada yang salah atau mau ditambah, bilang aja.",
