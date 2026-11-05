@@ -4,6 +4,7 @@ import PublicShell from "@/components/public-shell";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient, BUCKET } from "@/lib/supabase/service";
 import { dayMonth, timeOf, CATEGORY_LABEL } from "@/lib/format";
+import { DAYS } from "@/lib/schedule";
 
 const TONES = ["peach", "sage", "lilac"];
 
@@ -11,7 +12,10 @@ export default async function HomePage() {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
-  const [{ data: deadlines }, { data: events }, { data: photos }] = await Promise.all([
+  const hariIni = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "Asia/Makassar" }).format(new Date());
+  const hariNo = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(hariIni) + 1; // 1 = Senin
+
+  const [{ data: deadlines }, { data: events }, { data: photos }, { data: kuliah }] = await Promise.all([
     supabase.from("tasks").select("*")
       .eq("scope", "cohort")
       .gte("due_at", now).order("due_at").limit(3),
@@ -19,6 +23,8 @@ export default async function HomePage() {
       .gte("starts_at", now).order("starts_at").limit(2),
     supabase.from("photos").select("id, storage_path, caption")
       .eq("status", "approved").order("created_at", { ascending: false }).limit(4),
+    supabase.from("class_schedule").select("id, start_time, end_time, course, room")
+      .eq("day", hariNo).order("start_time"),
   ]);
 
   const photoUrls = new Map<string, string>();
@@ -34,6 +40,25 @@ export default async function HomePage() {
     <section className="public-welcome"><div><div className="eyebrow">// ANGKATAN 2025</div><h1>Salam Setrum.<br/><em>Selalu Jaya.</em></h1><p className="public-lead">Jadwal, deadline, dan arsip angkatan di satu tempat. Buat yang malas buka grup angkatan.</p><div className="welcome-actions"><Link href="/deadlines" className="primary-button">Cek deadline <ArrowRight size={16}/></Link><Link href="/ruang" className="subtle-link">Buka dashboard <ArrowRight size={15}/></Link></div></div><div className="public-art" aria-label="Kolase arsip angkatan"><div className="art-sun"/><span className="art-flower flower-a">+</span><span className="art-flower flower-b">×</span><div className="yearbook-card yearbook-left"><div className="yearbook-photo photo-green">BELUM<br/>TIDUR</div><span>fig. 01</span></div><div className="yearbook-card yearbook-right"><div className="yearbook-photo photo-peach">EST.<br/>2025</div><span>angkatan &apos;25</span></div><div className="art-tape"/><span className="art-note">arsip, bukan pajangan</span></div></section>
 
     <section className="access-note"><div className="access-icon"><LockKeyhole size={18}/></div><div><strong>Semua bisa dilihat tanpa login.</strong><p>Login cuma buat PJ dan admin yang mau mengelola isi.</p></div><Link href="/login">Login PJ <ArrowRight size={14}/></Link></section>
+
+    <section className="public-panel schedule-today">
+      <div className="public-section-heading compact">
+        <div><span className="eyebrow">HARI INI · {DAYS[hariNo - 1]?.toUpperCase()}</span><h2>Kuliah hari ini</h2></div>
+        <Link href="/jadwal" className="section-link">Semua jadwal <ArrowRight size={15}/></Link>
+      </div>
+      {(kuliah?.length ?? 0) === 0 && <p>Tidak ada kuliah hari ini. Aman.</p>}
+      <div className="class-grid">
+        {kuliah?.map((r) => <div className="class-box" key={r.id}>
+          <div className="class-time">
+            {String(r.start_time).slice(0, 5)}<small>{String(r.end_time).slice(0, 5)}</small>
+          </div>
+          <div className="class-info">
+            <strong>{r.course}</strong>
+            {r.room && <span>{r.room}</span>}
+          </div>
+        </div>)}
+      </div>
+    </section>
 
     <div className="public-section-heading"><div><span className="eyebrow">JANGAN SAMPAI TELAT</span><h2>Deadline terdekat</h2></div><Link href="/deadlines" className="section-link">Semua deadline <ArrowRight size={15}/></Link></div>
     <section className="public-deadline-grid">
